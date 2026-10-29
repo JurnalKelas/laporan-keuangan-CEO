@@ -93,7 +93,7 @@
         <span>Input Penjualan</span>
       </button>
 
-      <!-- Input Pengeluaran Navigation Button (New Menu) -->
+      <!-- Input Pengeluaran Navigation Button -->
       <button onclick="switchTab('pengeluaran')" id="nav-pengeluaran" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 border-l-4 border-transparent hover:bg-slate-800 hover:text-slate-200 transition-all">
         <i class="fa-solid fa-receipt w-5 text-center text-rose-400"></i>
         <span>Catat Pengeluaran</span>
@@ -142,7 +142,7 @@
 
       <div class="flex items-center gap-4 sm:gap-6">
         <span class="hidden lg:inline-flex items-center px-3 py-1 rounded-md text-[11px] font-medium bg-brand-50 text-brand-700 border border-brand-100">
-          <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mr-2 animate-pulse"></span> Auto-Sync Active
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mr-2 animate-pulse"></span> Penyimpanan Lokal Aktif
         </span>
 
         <!-- Logo Upload Placeholders -->
@@ -186,7 +186,7 @@
     <!-- Main Content Body -->
     <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
       
-      <!-- KPI Metric Summary Widgets (6 Responsive Cards) -->
+      <!-- KPI Metric Summary Widgets -->
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
         
         <!-- Widget 1: Saldo Awal -->
@@ -310,7 +310,6 @@
                 <input type="text" id="inputKetSaldo" placeholder="Cth: Modal awal kasir kantin dari pembina..." class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm bg-slate-50 focus:bg-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20">
               </div>
 
-              <!-- Information Card inside Saldo Form -->
               <div class="bg-purple-50/70 border border-purple-200/60 rounded-xl p-4 flex items-start gap-3 text-xs text-purple-900">
                 <i class="fa-solid fa-circle-info text-purple-600 text-base mt-0.5"></i>
                 <div class="space-y-1">
@@ -334,7 +333,7 @@
             </form>
           </div>
 
-          <!-- Card Summary Saldo & Quick Tips -->
+          <!-- Card Summary Saldo -->
           <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 flex flex-col justify-between overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
               <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
@@ -580,30 +579,96 @@
         </div>
       </section>
 
-      <!-- PANEL 4: Riwayat Data Panel (Tabbed: Penjualan & Pengeluaran) -->
+      <!-- PANEL 4: Riwayat Data Panel (Filter Tanggal Cepat + Subtotal Dinamis + Margin Rata-rata) -->
       <section id="panel-riwayat" class="tab-panel hidden animate-fade-in">
         <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col h-[calc(100vh-14rem)]">
           
-          <!-- Sub-Header & Tabs for History -->
-          <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shrink-0">
-            <div class="flex items-center gap-3">
-              <button onclick="switchHistorySubTab('sales')" id="subtab-sales" class="subtab-btn text-xs font-bold px-3 py-1.5 rounded-lg bg-brand-500 text-white shadow-sm transition-all">
-                <i class="fa-solid fa-basket-shopping mr-1"></i> Penjualan
-              </button>
-              <button onclick="switchHistorySubTab('expenses')" id="subtab-expenses" class="subtab-btn text-xs font-medium px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-200 transition-all">
-                <i class="fa-solid fa-receipt mr-1 text-rose-500"></i> Pengeluaran
-              </button>
+          <!-- Sub-Header & Controls Container -->
+          <div class="p-4 sm:px-6 border-b border-slate-100 bg-slate-50/50 flex flex-col gap-3 shrink-0">
+            
+            <!-- Baris 1: Tab Pilihan & Tombol Aksi Global -->
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
+              <!-- Switch Tab Data: Penjualan vs Pengeluaran -->
+              <div class="flex items-center gap-2">
+                <button onclick="switchHistorySubTab('sales')" id="subtab-sales" class="subtab-btn text-xs font-bold px-3 py-1.5 rounded-lg bg-brand-500 text-white shadow-sm transition-all">
+                  <i class="fa-solid fa-basket-shopping mr-1"></i> Penjualan
+                </button>
+                <button onclick="switchHistorySubTab('expenses')" id="subtab-expenses" class="subtab-btn text-xs font-medium px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-200 transition-all">
+                  <i class="fa-solid fa-receipt mr-1 text-rose-500"></i> Pengeluaran
+                </button>
+              </div>
+
+              <!-- Tombol Ekspor & Manajemen File -->
+              <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                <!-- Tombol Export Excel (CSV) -->
+                <button type="button" onclick="exportToCSV()" class="shrink-0 text-xs text-emerald-700 bg-emerald-50 hover:bg-emerald-100 font-semibold px-3 py-1.5 border border-emerald-200 rounded-lg transition-colors flex items-center gap-1.5" title="Ekspor data aktif yang tersaring ke Excel (.csv)">
+                  <i class="fa-solid fa-file-excel text-emerald-600"></i> Export Excel (CSV)
+                </button>
+
+                <!-- Tombol Backup JSON -->
+                <button type="button" onclick="exportDataBackup()" class="shrink-0 text-xs text-brand-700 bg-brand-50 hover:bg-brand-100 font-semibold px-3 py-1.5 border border-brand-200 rounded-lg transition-colors flex items-center gap-1.5" title="Unduh backup data perangkat ini ke file JSON">
+                  <i class="fa-solid fa-download"></i> Backup JSON
+                </button>
+
+                <!-- Tombol Restore JSON -->
+                <button type="button" onclick="document.getElementById('importFileInput').click()" class="shrink-0 text-xs text-blue-700 bg-blue-50 hover:bg-blue-100 font-semibold px-3 py-1.5 border border-blue-200 rounded-lg transition-colors flex items-center gap-1.5" title="Buka dan muat data dari file JSON cadangan">
+                  <i class="fa-solid fa-upload"></i> Restore JSON
+                </button>
+                <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="importDataBackup(event)">
+
+                <!-- Tombol Reset Data -->
+                <button onclick="clearCurrentHistoryData()" class="shrink-0 text-xs text-rose-600 hover:text-rose-700 font-semibold px-3 py-1.5 border border-rose-200 hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-1.5">
+                  <i class="fa-solid fa-trash-can"></i> Reset Data
+                </button>
+              </div>
             </div>
 
-            <div class="flex items-center gap-3 w-full sm:w-auto">
-              <div class="relative w-full sm:w-64">
+            <!-- Baris 2: Search Box & Date Range Filter & Preset Cepat -->
+            <div class="flex flex-wrap items-center gap-2.5 pt-2 border-t border-slate-200/60">
+              
+              <!-- Input Pencarian Teks -->
+              <div class="relative flex-1 min-w-[180px] sm:w-56">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                <input type="text" id="tableSearch" oninput="renderHistoryTables()" placeholder="Cari data..." class="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none">
+                <input type="text" id="tableSearch" oninput="renderHistoryTables()" placeholder="Cari nama barang / keterangan..." class="w-full pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none">
               </div>
-              <button onclick="clearCurrentHistoryData()" class="shrink-0 text-xs text-rose-600 hover:text-rose-700 font-semibold px-3 py-2 border border-rose-200 hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-2">
-                <i class="fa-solid fa-trash-can"></i> Reset Data
+
+              <!-- Tombol Preset Tanggal Cepat -->
+              <div class="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+                <button type="button" onclick="applyDatePreset('today')" id="preset-today" class="date-preset-btn text-[11px] font-medium px-2 py-1 rounded text-slate-600 hover:bg-white hover:text-slate-900 transition-all">
+                  Hari Ini
+                </button>
+                <button type="button" onclick="applyDatePreset('week')" id="preset-week" class="date-preset-btn text-[11px] font-medium px-2 py-1 rounded text-slate-600 hover:bg-white hover:text-slate-900 transition-all">
+                  7 Hari
+                </button>
+                <button type="button" onclick="applyDatePreset('month')" id="preset-month" class="date-preset-btn text-[11px] font-medium px-2 py-1 rounded text-slate-600 hover:bg-white hover:text-slate-900 transition-all">
+                  Bulan Ini
+                </button>
+              </div>
+
+              <!-- Filter Rentang Kalender Manual -->
+              <div class="flex items-center gap-2 bg-white px-2.5 py-1 rounded-lg border border-slate-300 shadow-xs">
+                <span class="text-[11px] font-semibold text-slate-500 flex items-center gap-1">
+                  <i class="fa-regular fa-calendar text-slate-400"></i> Dari:
+                </span>
+                <input type="date" id="filterStartDate" onchange="clearPresetStyles(); renderHistoryTables();" class="text-xs text-slate-700 outline-none bg-transparent cursor-pointer font-medium">
+                
+                <span class="text-slate-300 text-xs font-light">|</span>
+                
+                <span class="text-[11px] font-semibold text-slate-500">Sampai:</span>
+                <input type="date" id="filterEndDate" onchange="clearPresetStyles(); renderHistoryTables();" class="text-xs text-slate-700 outline-none bg-transparent cursor-pointer font-medium">
+              </div>
+
+              <!-- Tombol Reset Filter Tanggal & Search -->
+              <button type="button" onclick="resetHistoryFilters()" class="text-xs text-slate-600 hover:text-slate-900 bg-slate-200 hover:bg-slate-300 px-2.5 py-1.5 rounded-lg transition-colors font-medium flex items-center gap-1" title="Reset filter tanggal dan pencarian">
+                <i class="fa-solid fa-filter-circle-xmark"></i> Reset Filter
               </button>
+
+              <!-- Label Status Filter Aktif -->
+              <span id="filterActiveBadge" class="hidden text-[10px] font-bold text-brand-700 bg-brand-50 border border-brand-200 px-2 py-1 rounded-md">
+                <i class="fa-solid fa-filter text-[9px] mr-1"></i> Filter Aktif
+              </span>
             </div>
+
           </div>
 
           <!-- History Sub-View 1: Penjualan Table -->
@@ -626,11 +691,11 @@
               </tbody>
             </table>
             
-            <div id="emptyHistoryState" class="hidden flex flex-col items-center justify-center h-64 text-slate-400">
+            <div id="emptyHistoryState" class="hidden flex flex-col items-center justify-center h-48 text-slate-400">
               <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mb-3">
                 <i class="fa-solid fa-folder-open text-xl text-slate-300"></i>
               </div>
-              <p class="text-sm font-medium text-slate-500">Belum ada transaksi penjualan tercatat</p>
+              <p class="text-sm font-medium text-slate-500">Tidak ada transaksi penjualan yang cocok dengan filter</p>
             </div>
           </div>
 
@@ -651,11 +716,54 @@
               </tbody>
             </table>
             
-            <div id="emptyExpenseState" class="hidden flex flex-col items-center justify-center h-64 text-slate-400">
+            <div id="emptyExpenseState" class="hidden flex flex-col items-center justify-center h-48 text-slate-400">
               <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mb-3">
                 <i class="fa-solid fa-receipt text-xl text-slate-300"></i>
               </div>
-              <p class="text-sm font-medium text-slate-500">Belum ada pengeluaran operasional tercatat</p>
+              <p class="text-sm font-medium text-slate-500">Tidak ada pengeluaran operasional yang cocok dengan filter</p>
+            </div>
+          </div>
+
+          <!-- BAR RINGKASAN SUBTOTAL DINAMIS DENGAN METRIK MARGIN -->
+          <div class="border-t border-slate-200 bg-slate-50/90 px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs shrink-0 shadow-inner">
+            <div class="flex items-center gap-2 text-slate-500">
+              <i class="fa-solid fa-calculator text-brand-600"></i>
+              <span class="font-medium">Subtotal Tampil:</span>
+              <span id="subtotalItemCount" class="font-bold text-slate-800 bg-slate-200/80 px-2 py-0.5 rounded text-[11px]">0 Data</span>
+            </div>
+
+            <!-- Subtotal Dinamis Penjualan Beserta Rata-Rata Margin -->
+            <div id="subtotalSalesGroup" class="flex flex-wrap items-center gap-3 sm:gap-5">
+              <div class="flex items-center gap-1.5">
+                <span class="text-slate-500">Total Modal:</span>
+                <span id="subtotalSalesModal" class="font-bold text-amber-600">Rp 0</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-slate-500">Total Omset:</span>
+                <span id="subtotalSalesOmset" class="font-bold text-slate-900">Rp 0</span>
+              </div>
+              
+              <!-- Badge Rata-Rata Margin Profit -->
+              <div class="flex items-center gap-1.5 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">
+                <span class="text-blue-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-percent text-[10px]"></i> Rata-rata Margin:
+                </span>
+                <span id="subtotalSalesMargin" class="font-bold text-blue-700 text-xs">0%</span>
+              </div>
+
+              <!-- Badge Total Laba -->
+              <div class="flex items-center gap-1.5 bg-brand-50 px-2.5 py-1 rounded-md border border-brand-200">
+                <span class="text-brand-800 font-semibold">Total Laba:</span>
+                <span id="subtotalSalesLaba" class="font-bold text-brand-600 text-sm">Rp 0</span>
+              </div>
+            </div>
+
+            <!-- Subtotal Dinamis Pengeluaran -->
+            <div id="subtotalExpenseGroup" class="hidden flex items-center gap-4 sm:gap-6">
+              <div class="flex items-center gap-1.5 bg-rose-50 px-2.5 py-1 rounded-md border border-rose-200">
+                <span class="text-rose-800 font-semibold">Total Beban Operasional:</span>
+                <span id="subtotalExpenseNominal" class="font-bold text-rose-600 text-sm">Rp 0</span>
+              </div>
             </div>
           </div>
 
@@ -920,7 +1028,6 @@
       expensesData.unshift(newExpense);
       saveExpenseData();
 
-      // Clear input fields
       document.getElementById('inputDeskripsiPengeluaran').value = '';
       document.getElementById('inputNominalPengeluaran').value = '';
       document.getElementById('inputCatatanPengeluaran').value = '';
@@ -1019,12 +1126,10 @@
         categoryTotals[exp.kategori] = (categoryTotals[exp.kategori] || 0) + (exp.nominal || 0);
       });
 
-      // Net Profit = (Omset - HPP Modal) - Pengeluaran OpEx
       const labaBersihNet = totalLabaProduk - totalPengeluaran;
       const saldoAwal = saldoAwalData.nominal || 0;
       const kasAkhir = saldoAwal + labaBersihNet;
 
-      // Find top expense category
       let topCategory = '-';
       let maxExpVal = 0;
       for (const [cat, val] of Object.entries(categoryTotals)) {
@@ -1065,31 +1170,136 @@
       const viewSales = document.getElementById('history-sales-view');
       const viewExpenses = document.getElementById('history-expenses-view');
 
+      const subtotalSales = document.getElementById('subtotalSalesGroup');
+      const subtotalExpense = document.getElementById('subtotalExpenseGroup');
+
       if (subTab === 'sales') {
         btnSales.className = 'subtab-btn text-xs font-bold px-3 py-1.5 rounded-lg bg-brand-500 text-white shadow-sm transition-all';
         btnExpenses.className = 'subtab-btn text-xs font-medium px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-200 transition-all';
         viewSales.classList.remove('hidden');
         viewExpenses.classList.add('hidden');
+        subtotalSales.classList.remove('hidden');
+        subtotalExpense.classList.add('hidden');
       } else {
         btnExpenses.className = 'subtab-btn text-xs font-bold px-3 py-1.5 rounded-lg bg-rose-600 text-white shadow-sm transition-all';
         btnSales.className = 'subtab-btn text-xs font-medium px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-200 transition-all';
         viewExpenses.classList.remove('hidden');
         viewSales.classList.add('hidden');
+        subtotalExpense.classList.remove('hidden');
+        subtotalSales.classList.add('hidden');
       }
       renderHistoryTables();
     }
 
-    function renderHistoryTables() {
-      const searchTerm = (document.getElementById('tableSearch').value || '').toLowerCase();
+    // === PRESET FILTER TANGGAL CEPAT ===
+    function clearPresetStyles() {
+      document.querySelectorAll('.date-preset-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'text-brand-700', 'font-bold', 'shadow-xs');
+        btn.classList.add('text-slate-600', 'font-medium');
+      });
+    }
 
-      // 1. Sales Table Render
+    function applyDatePreset(type) {
+      clearPresetStyles();
+      const activeBtn = document.getElementById(`preset-${type}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-600', 'font-medium');
+        activeBtn.classList.add('bg-white', 'text-brand-700', 'font-bold', 'shadow-xs');
+      }
+
+      const today = new Date();
+      const formatYMD = d => {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
+      const todayStr = formatYMD(today);
+
+      if (type === 'today') {
+        document.getElementById('filterStartDate').value = todayStr;
+        document.getElementById('filterEndDate').value = todayStr;
+      } else if (type === 'week') {
+        const last7 = new Date();
+        last7.setDate(today.getDate() - 6);
+        document.getElementById('filterStartDate').value = formatYMD(last7);
+        document.getElementById('filterEndDate').value = todayStr;
+      } else if (type === 'month') {
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        document.getElementById('filterStartDate').value = formatYMD(firstDay);
+        document.getElementById('filterEndDate').value = formatYMD(lastDay);
+      }
+
+      renderHistoryTables();
+    }
+
+    // Helper: Mendapatkan data yang tersaring berdasarkan pencarian dan rentang tanggal
+    function getFilteredHistoryData() {
+      const searchTerm = (document.getElementById('tableSearch').value || '').toLowerCase().trim();
+      const startDate = document.getElementById('filterStartDate').value;
+      const endDate = document.getElementById('filterEndDate').value;
+
+      // Update badge filter aktif
+      const badge = document.getElementById('filterActiveBadge');
+      if (startDate || endDate || searchTerm) {
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+
+      // Filter Data Penjualan
+      const filteredSales = salesData.filter(item => {
+        const matchSearch = item.namaBarang.toLowerCase().includes(searchTerm) || item.tanggal.includes(searchTerm);
+        const matchStart = startDate ? item.tanggal >= startDate : true;
+        const matchEnd = endDate ? item.tanggal <= endDate : true;
+        return matchSearch && matchStart && matchEnd;
+      });
+
+      // Filter Data Pengeluaran
+      const filteredExpenses = expensesData.filter(exp => {
+        const matchSearch = exp.deskripsi.toLowerCase().includes(searchTerm) || 
+                            exp.kategori.toLowerCase().includes(searchTerm) || 
+                            exp.tanggal.includes(searchTerm);
+        const matchStart = startDate ? exp.tanggal >= startDate : true;
+        const matchEnd = endDate ? exp.tanggal <= endDate : true;
+        return matchSearch && matchStart && matchEnd;
+      });
+
+      return { filteredSales, filteredExpenses };
+    }
+
+    function resetHistoryFilters() {
+      clearPresetStyles();
+      document.getElementById('tableSearch').value = '';
+      document.getElementById('filterStartDate').value = '';
+      document.getElementById('filterEndDate').value = '';
+      renderHistoryTables();
+      showNotification("Filter Direset", "Menampilkan seluruh riwayat transaksi.", "info");
+    }
+
+    function renderHistoryTables() {
+      const { filteredSales, filteredExpenses } = getFilteredHistoryData();
+
+      // 1. Sales Table Render & Perhitungan Subtotal Penjualan + Margin
       const tbodySales = document.getElementById('historyTableBody');
       const emptySales = document.getElementById('emptyHistoryState');
 
-      const filteredSales = salesData.filter(item => 
-        item.namaBarang.toLowerCase().includes(searchTerm) || 
-        item.tanggal.includes(searchTerm)
-      );
+      let subtotalSalesOmset = 0;
+      let subtotalSalesModal = 0;
+      let subtotalSalesLaba = 0;
+
+      filteredSales.forEach(item => {
+        subtotalSalesOmset += item.totalOmset || 0;
+        subtotalSalesModal += item.totalModal || 0;
+        subtotalSalesLaba += item.laba || 0;
+      });
+
+      // Hitung persentase rata-rata margin dari data yang tampil
+      const subtotalMarginPercent = subtotalSalesOmset > 0 
+        ? ((subtotalSalesLaba / subtotalSalesOmset) * 100).toFixed(1) 
+        : 0;
 
       if (filteredSales.length === 0) {
         tbodySales.innerHTML = '';
@@ -1114,15 +1324,14 @@
         `).join('');
       }
 
-      // 2. Expense Table Render
+      // 2. Expense Table Render & Perhitungan Subtotal Pengeluaran
       const tbodyExpenses = document.getElementById('expenseTableBody');
       const emptyExpenses = document.getElementById('emptyExpenseState');
 
-      const filteredExpenses = expensesData.filter(exp => 
-        exp.deskripsi.toLowerCase().includes(searchTerm) || 
-        exp.kategori.toLowerCase().includes(searchTerm) ||
-        exp.tanggal.includes(searchTerm)
-      );
+      let subtotalExpenseNominal = 0;
+      filteredExpenses.forEach(exp => {
+        subtotalExpenseNominal += exp.nominal || 0;
+      });
 
       if (filteredExpenses.length === 0) {
         tbodyExpenses.innerHTML = '';
@@ -1142,6 +1351,19 @@
             </td>
           </tr>
         `).join('');
+      }
+
+      // 3. Render Nilai Subtotal ke Bar Footer Sesuai Tab Aktif
+      if (activeHistorySubTab === 'sales') {
+        document.getElementById('subtotalItemCount').textContent = `${filteredSales.length} Transaksi`;
+        document.getElementById('subtotalSalesModal').textContent = formatRupiah(subtotalSalesModal);
+        document.getElementById('subtotalSalesOmset').textContent = formatRupiah(subtotalSalesOmset);
+        document.getElementById('subtotalSalesMargin').textContent = `${subtotalMarginPercent}%`;
+        document.getElementById('subtotalSalesLaba').textContent = (subtotalSalesLaba >= 0 ? '+ ' : '') + formatRupiah(subtotalSalesLaba);
+        document.getElementById('subtotalSalesLaba').className = `font-bold text-sm ${subtotalSalesLaba >= 0 ? 'text-brand-600' : 'text-rose-600'}`;
+      } else {
+        document.getElementById('subtotalItemCount').textContent = `${filteredExpenses.length} Pengeluaran`;
+        document.getElementById('subtotalExpenseNominal').textContent = formatRupiah(subtotalExpenseNominal);
       }
     }
 
@@ -1181,6 +1403,128 @@
       }
     }
 
+    // === FITUR EXPORT EXCEL (CSV) MENYESUAIKAN FILTER ===
+    function exportToCSV() {
+      const { filteredSales, filteredExpenses } = getFilteredHistoryData();
+
+      if (filteredSales.length === 0 && filteredExpenses.length === 0) {
+        showNotification("Data Kosong", "Tidak ada transaksi (sesuai filter) untuk diekspor ke Excel.", "danger");
+        return;
+      }
+
+      // 1. Bagian Tabel Penjualan
+      let csvContent = "DATA TRANSAKSI PENJUALAN\r\n";
+      csvContent += "No;Tanggal;Nama Barang;Modal Satuan;Harga Jual Satuan;Qty;Total Modal;Total Omset;Laba Bersih\r\n";
+
+      filteredSales.forEach((item, index) => {
+        const row = [
+          index + 1,
+          `"${item.tanggal}"`,
+          `"${(item.namaBarang || '').replace(/"/g, '""')}"`,
+          item.modalSatuan || 0,
+          item.hargaJual || 0,
+          item.qty || 0,
+          item.totalModal || 0,
+          item.totalOmset || 0,
+          item.laba || 0
+        ];
+        csvContent += row.join(";") + "\r\n";
+      });
+
+      // 2. Pemisah Baris Kosong
+      csvContent += "\r\n\r\n";
+
+      // 3. Bagian Tabel Pengeluaran
+      csvContent += "DATA PENGELUARAN OPERASIONAL\r\n";
+      csvContent += "No;Tanggal;Kategori;Deskripsi Pengeluaran;Catatan;Nominal Beban\r\n";
+
+      filteredExpenses.forEach((exp, index) => {
+        const row = [
+          index + 1,
+          `"${exp.tanggal}"`,
+          `"${(exp.kategori || '').replace(/"/g, '""')}"`,
+          `"${(exp.deskripsi || '').replace(/"/g, '""')}"`,
+          `"${(exp.catatan || '').replace(/"/g, '""')}"`,
+          exp.nominal || 0
+        ];
+        csvContent += row.join(";") + "\r\n";
+      });
+
+      // Menambahkan UTF-8 BOM (\uFEFF) agar Microsoft Excel langsung mengenali tanda baca dan huruf dengan rapi
+      const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const downloadLink = document.createElement("a");
+      
+      const today = new Date().toISOString().split("T")[0];
+      downloadLink.setAttribute("href", url);
+      downloadLink.setAttribute("download", `Laporan_Keuangan_AlphaCEO_${today}.csv`);
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      downloadLink.remove();
+      URL.revokeObjectURL(url);
+
+      showNotification("Ekspor Berhasil", "File Excel (.csv) tersaring berhasil diunduh.", "success");
+    }
+
+    // === FITUR BACKUP & RESTORE JSON ===
+    function exportDataBackup() {
+      const fullBackup = {
+        saldoAwal: saldoAwalData,
+        penjualan: salesData,
+        pengeluaran: expensesData,
+        exportedAt: new Date().toISOString()
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullBackup, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `Backup_ALPHA_CEO_${new Date().toISOString().split('T')[0]}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+
+      showNotification("Backup Berhasil", "File cadangan data telah diunduh ke folder perangkat Anda.", "success");
+    }
+
+    function importDataBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const backup = JSON.parse(e.target.result);
+          if (backup.penjualan || backup.pengeluaran || backup.saldoAwal) {
+            if (confirm("Memulihkan data akan menggantikan data yang sedang aktif di perangkat ini. Lanjutkan?")) {
+              if (backup.saldoAwal) {
+                saldoAwalData = backup.saldoAwal;
+                localStorage.setItem(SALDO_KEY, JSON.stringify(saldoAwalData));
+                loadSaldoAwal();
+              }
+              if (backup.penjualan) {
+                salesData = backup.penjualan;
+                saveSalesData();
+              }
+              if (backup.pengeluaran) {
+                expensesData = backup.pengeluaran;
+                saveExpenseData();
+              }
+
+              updateAllStats();
+              renderHistoryTables();
+              showNotification("Pulih Berhasil", "Data dari file cadangan berhasil dimuat ke aplikasi.", "success");
+            }
+          } else {
+            showNotification("Format Salah", "File JSON tidak berisi struktur data ALPHA CEO yang cocok.", "danger");
+          }
+        } catch (err) {
+          showNotification("Gagal", "File rusak atau tidak valid.", "danger");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
     function renderWeeklyAndMonthlyReports() {
       const weeklyBody = document.getElementById('weeklyReportBody');
       const monthlyBody = document.getElementById('monthlyReportBody');
@@ -1189,7 +1533,7 @@
       const monthlyGroup = {};
 
       salesData.forEach(item => {
-        const monthKey = item.tanggal.substring(0, 7); // YYYY-MM
+        const monthKey = item.tanggal.substring(0, 7);
         if (!monthlyGroup[monthKey]) monthlyGroup[monthKey] = { omset: 0, modal: 0, exp: 0 };
         monthlyGroup[monthKey].omset += item.totalOmset;
         monthlyGroup[monthKey].modal += item.totalModal;
